@@ -44,6 +44,21 @@ const router = createRouter({
           path: 'articles/edit/:id',
           name: 'AdminArticleEdit',
           component: () => import('@/views/admin/ArticleForm.vue')
+        },
+        {
+          path: 'github/repos',
+          name: 'AdminGithubRepos',
+          component: () => import('@/views/admin/GithubRepos.vue')
+        },
+        {
+          path: 'github/sync-history',
+          name: 'AdminGithubSyncHistory',
+          component: () => import('@/views/admin/GithubSyncHistory.vue')
+        },
+        {
+          path: 'github/sync-articles',
+          name: 'AdminGithubSyncArticles',
+          component: () => import('@/views/admin/GithubSyncArticles.vue')
         }
       ]
     },

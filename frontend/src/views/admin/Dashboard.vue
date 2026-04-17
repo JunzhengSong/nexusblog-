@@ -20,6 +20,25 @@
             <el-icon><Document /></el-icon>
             <span>文章管理</span>
           </el-menu-item>
+
+          <el-sub-menu index="github">
+            <template #title>
+              <el-icon><Link /></el-icon>
+              <span>GitHub同步</span>
+            </template>
+            <el-menu-item index="/admin/github/repos">
+              <el-icon><Files /></el-icon>
+              <span>仓库配置</span>
+            </el-menu-item>
+            <el-menu-item index="/admin/github/sync-history">
+              <el-icon><Refresh /></el-icon>
+              <span>同步历史</span>
+            </el-menu-item>
+            <el-menu-item index="/admin/github/sync-articles">
+              <el-icon><Document /></el-icon>
+              <span>同步文章</span>
+            </el-menu-item>
+          </el-sub-menu>
         </el-menu>
       </nav>
 
@@ -49,7 +68,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { House, Document, User } from '@element-plus/icons-vue'
+import { House, Document, User, Link, Refresh, Files } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { authApi } from '@/api'
 
@@ -123,6 +142,14 @@ const handleLogout = async () => {
 .nav :deep(.el-menu) {
   background: transparent;
   border: none;
+}
+
+.nav :deep(.el-sub-menu) {
+  color: #d1d5db;
+}
+
+.nav :deep(.el-sub-menu__title) {
+  color: #d1d5db;
 }
 
 .nav :deep(.el-menu-item) {
