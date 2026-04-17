@@ -7,8 +7,9 @@ An AI-native minimalist personal blog system.
 ### Backend
 - Java 21
 - Spring Boot 3.2.x
-- Spring Data JPA
-- H2 Database (file mode)
+- MyBatis-Plus 3.5.5
+- MySQL 8.0+
+- Flyway (database migration)
 - Spring Security
 
 ### Frontend
@@ -37,11 +38,23 @@ nexusblog/
 - JDK 21
 - Node.js 18+
 - Maven (or use backend/mvnw)
+- MySQL 8.0+ (or MariaDB 10.5+)
 
 ### Backend Setup
 ```bash
 cd backend
 ./mvnw spring-boot:run
+```
+
+**配置环境变量：**
+在运行前，需要配置MySQL数据库连接信息。请参考 [ENV_VARIABLES.md](ENV_VARIABLES.md) 文档。
+
+**快速本地配置示例：**
+在 `backend` 目录下创建 `.env` 文件：
+```bash
+DB_URL=jdbc:mysql://localhost:3306/nexusblog?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+DB_USERNAME=root
+DB_PASSWORD=your_mysql_password
 ```
 
 Backend runs on `http://localhost:8080`
@@ -69,7 +82,9 @@ Frontend runs on `http://localhost:5173`
 - ✅ Categories and tags
 - ✅ Public article listing and detail view
 - ✅ Admin dashboard
-- ✅ Data persistence (H2 file database)
+- ✅ Data persistence (MySQL database with MyBatis-Plus)
+- ✅ Database migrations (Flyway)
+- ✅ Environment variable configuration
 
 ## API Documentation
 
