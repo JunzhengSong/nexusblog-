@@ -7,38 +7,82 @@ spring:
   application:
     name: nexusblog
 
-  # H2 Database Configuration
+  # MySQL 数据库配置 (请在项目根目录的 .env 文件中配置 DB_URL, DB_USERNAME, DB_PASSWORD)
   datasource:
-    url: jdbc:h2:file:./data/nexusblog;MODE=MySQL;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: ${DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      # 连接池大小
+      minimum-idle: 5
+      maximum-pool-size: 20
+      # 连接超时时间（毫秒）
+      connection-timeout: 30000
+      # 空闲连接超时时间（毫秒）
+      idle-timeout: 600000
+      # 连接最大生存时间（毫秒）
+      max-lifetime: 1800000
+      # 连接测试查询
+      connection-test-query: SELECT 1
 
-  # 激活 MySQL 配置
-  profiles:
-    active: mysql
+  # MyBatis-Plus 配置
+  mybatis-plus:
+    # Mapper XML 文件位置
+    mapper-locations: classpath*:/mapper/**/*.xml
+    # 实体类包路径
+    type-aliases-package: com.nexusblog.entity
+    # 配置
+    configuration:
+      # 下划线转驼峰
+      map-underscore-to-camel-case: true
+      # 日志实现
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 全局配置
+    global-config:
+      db-config:
+        # 主键类型（AUTO为数据库自增）
+        id-type: AUTO
+        # 逻辑删除字段名
+        logic-delete-field: deleted
+        # 逻辑删除值（已删除）
+        logic-delete-value: 1
+        # 逻辑未删除值（未删除）
+        logic-not-delete-value: 0
 
-  # MVC Configuration
-  mvc:
-    throw-exception-if-no-handler-found: true
+  # Flyway 数据库迁移配置
+  flyway:
+    # 是否启用 Flyway
+    enabled: false
+    # 迁移脚本位置
+    locations: classpath:db/migration
+    # 迁移时验证
+    validate-on-migrate: true
+    # 基准版本（首次迁移时使用）
+    baseline-on-migrate: true
+    # 编码
+    encoding: UTF-8
+    # 迁移脚本前缀
+    sql-migration-prefix: V
+    # 迁移脚本分隔符
+    sql-migration-separator: __
+    # 迁移脚本后缀
+    sql-migration-suffixes: .sql
 
-# Logging Configuration
 logging:
   level:
     root: INFO
     com.nexusblog: DEBUG
     org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.mybatis: DEBUG
 
-# NexusBlog Configuration
 nexusblog:
   security:
-    session-timeout: 3600  # 1 hour in seconds
+    session-timeout: 3600
   cors:
     allowed-origins: http://localhost:5173,http://localhost:3000
     allowed-methods: GET,POST,PUT,DELETE,OPTIONS
     allowed-headers: "*"
     allow-credentials: true
   encrypt:
-    secret-key: nexusblog@2024#$%  # AES加密密钥，生产环境请修改为16/24/32位的安全密钥
+    secret-key: nexusblog@2024#$%

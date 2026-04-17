@@ -45,5 +45,13 @@ Thumbs.db
 # Docker
 .dockerignore
 
+# Environment variables (contains secrets, never commit)
+.env
+.env.local
+.env.*.local
+
+# Environment variable template (safe to commit)
+!.env.example
+
 # OpenSpec (optional - keep if you want to track changes)
 # openspec/
