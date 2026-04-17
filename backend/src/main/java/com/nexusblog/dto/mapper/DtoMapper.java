@@ -20,7 +20,7 @@ public class DtoMapper {
         return UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .createdAt(user.getCreatedAt())
+                .createdAt(user.getCreateTime())
                 .build();
     }
 
@@ -68,8 +68,8 @@ public class DtoMapper {
                 .content(article.getContent())
                 .category(toCategoryDTO(article.getCategory()))
                 .tags(toTagDTOList(article.getTags()))
-                .createdAt(article.getCreatedAt())
-                .updatedAt(article.getUpdatedAt())
+                .createdAt(article.getCreateTime())
+                .updatedAt(article.getUpdateTime())
                 .build();
     }
 

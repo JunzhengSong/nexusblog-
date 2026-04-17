@@ -1,5 +1,6 @@
 package com.nexusblog.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.nexusblog.dto.ArticleDTO;
 import com.nexusblog.dto.ArticleRequestDTO;
 import com.nexusblog.dto.mapper.DtoMapper;
@@ -7,13 +8,14 @@ import com.nexusblog.entity.Article;
 import com.nexusblog.entity.Category;
 import com.nexusblog.entity.Tag;
 import com.nexusblog.exception.ResourceNotFoundException;
-import com.nexusblog.repository.ArticleRepository;
-import com.nexusblog.repository.CategoryRepository;
-import com.nexusblog.repository.TagRepository;
+import com.nexusblog.mapper.ArticleMapper;
+import com.nexusblog.mapper.CategoryMapper;
+import com.nexusblog.mapper.TagMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,81 +23,92 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ArticleService {
 
-    private final ArticleRepository articleRepository;
-    private final CategoryRepository categoryRepository;
-    private final TagRepository tagRepository;
+    private final ArticleMapper articleMapper;
+    private final CategoryMapper categoryMapper;
+    private final TagMapper tagMapper;
     private final DtoMapper dtoMapper;
 
     public List<ArticleDTO> getAllArticles() {
-        List<Article> articles = articleRepository.findAllByOrderByCreatedAtDesc();
+        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("create_time");
+        List<Article> articles = articleMapper.selectList(wrapper);
         return dtoMapper.toArticleDTOList(articles);
     }
 
     public ArticleDTO getArticleById(Long id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Article", id));
+        Article article = articleMapper.selectById(id);
+        if (article == null) {
+            throw new ResourceNotFoundException("Article", id);
+        }
         return dtoMapper.toArticleDTO(article);
     }
 
     @Transactional
     public ArticleDTO createArticle(ArticleRequestDTO request) {
-        Article article = new Article();
-        article.setTitle(request.getTitle());
-        article.setContent(request.getContent());
+        Article article = Article.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .categoryId(request.getCategoryId())
+                .build();
 
-        // Set category if provided
+        // 设置分类（通过categoryId直接设置）
+        Category category = null;
         if (request.getCategoryId() != null) {
-            Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", request.getCategoryId()));
+            category = categoryMapper.selectById(request.getCategoryId());
+            if (category == null) {
+                throw new ResourceNotFoundException("Category", request.getCategoryId());
+            }
             article.setCategory(category);
         }
 
-        // Set tags if provided
+        // 设置标签
         if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
-            Set<Tag> tags = tagRepository.findAllById(request.getTagIds())
-                    .stream()
-                    .collect(java.util.stream.Collectors.toSet());
-            article.setTags(new java.util.ArrayList<>(tags));
+            List<Tag> tags = tagMapper.selectBatchIds(request.getTagIds());
+            article.setTags(new ArrayList<>(tags));
         }
 
-        Article savedArticle = articleRepository.save(article);
-        return dtoMapper.toArticleDTO(savedArticle);
+        articleMapper.insert(article);
+        return dtoMapper.toArticleDTO(article);
     }
 
     @Transactional
     public ArticleDTO updateArticle(Long id, ArticleRequestDTO request) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Article", id));
+        Article article = articleMapper.selectById(id);
+        if (article == null) {
+            throw new ResourceNotFoundException("Article", id);
+        }
 
         article.setTitle(request.getTitle());
         article.setContent(request.getContent());
+        article.setCategoryId(request.getCategoryId());
 
-        // Update category if provided
+        // 更新分类
         if (request.getCategoryId() != null) {
-            Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", request.getCategoryId()));
+            Category category = categoryMapper.selectById(request.getCategoryId());
+            if (category == null) {
+                throw new ResourceNotFoundException("Category", request.getCategoryId());
+            }
             article.setCategory(category);
         } else {
             article.setCategory(null);
         }
 
-        // Update tags if provided
+        // 更新标签
         if (request.getTagIds() != null) {
-            Set<Tag> tags = tagRepository.findAllById(request.getTagIds())
-                    .stream()
-                    .collect(java.util.stream.Collectors.toSet());
-            article.setTags(new java.util.ArrayList<>(tags));
+            List<Tag> tags = tagMapper.selectBatchIds(request.getTagIds());
+            article.setTags(new ArrayList<>(tags));
         }
 
-        Article savedArticle = articleRepository.save(article);
-        return dtoMapper.toArticleDTO(savedArticle);
+        articleMapper.updateById(article);
+        return dtoMapper.toArticleDTO(article);
     }
 
     @Transactional
     public void deleteArticle(Long id) {
-        if (!articleRepository.existsById(id)) {
+        Article article = articleMapper.selectById(id);
+        if (article == null) {
             throw new ResourceNotFoundException("Article", id);
         }
-        articleRepository.deleteById(id);
+        articleMapper.deleteById(id);
     }
 }

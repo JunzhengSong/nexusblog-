@@ -1,33 +1,26 @@
 package com.nexusblog.entity;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.nexusblog.entity.common.BaseEntity;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "users")
-@EntityListeners(AuditingEntityListener.class)
+/**
+ * 用户实体
+ */
+@TableName("users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 50)
     private String username;
 
-    @Column(nullable = false)
     private String password;
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 }

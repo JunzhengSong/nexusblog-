@@ -1,53 +1,39 @@
 package com.nexusblog.entity;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.nexusblog.entity.common.BaseEntity;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "articles")
-@EntityListeners(AuditingEntityListener.class)
+/**
+ * 文章实体
+ */
+@TableName("articles")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Article {
+public class Article extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    private Long categoryId;
+
+    @TableField(exist = false)
     private Category category;
 
-    @ManyToMany
-    @JoinTable(
-        name = "article_tags",
-        joinColumns = @JoinColumn(name = "article_id"),
-        inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
     @Builder.Default
+    @TableField(exist = false)
     private List<Tag> tags = new ArrayList<>();
-
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 }

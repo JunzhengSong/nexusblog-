@@ -1,10 +1,10 @@
 package com.nexusblog.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.nexusblog.dto.LoginRequest;
 import com.nexusblog.dto.LoginResponse;
-import com.nexusblog.dto.mapper.DtoMapper;
 import com.nexusblog.entity.User;
-import com.nexusblog.repository.UserRepository;
+import com.nexusblog.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final DtoMapper dtoMapper;
+    private final UserMapper userMapper;
 
     @Transactional
     public LoginResponse login(LoginRequest loginRequest) {
@@ -29,8 +28,13 @@ public class AuthService {
                 )
         );
 
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", loginRequest.getUsername());
+        User user = userMapper.selectOne(wrapper);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         return LoginResponse.builder()
                 .userId(user.getId())

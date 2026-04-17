@@ -1,28 +1,32 @@
 package com.nexusblog.entity;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.nexusblog.entity.common.BaseEntity;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "tags")
+/**
+ * 标签实体
+ */
+@TableName("tags")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Tag {
+public class Tag extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 50)
     private String name;
 
-    @ManyToMany(mappedBy = "tags", cascade = CascadeType.PERSIST)
     @Builder.Default
+    @TableField(exist = false)
     private List<Article> articles = new ArrayList<>();
 }
