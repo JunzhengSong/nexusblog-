@@ -117,6 +117,27 @@ public class GithubSyncService {
     }
 
     /**
+     * 根据ID获取同步历史
+     */
+    public SyncHistory getSyncHistoryById(Long syncHistoryId) {
+        return syncHistoryMapper.selectById(syncHistoryId);
+    }
+
+    /**
+     * 删除同步文章（同时删除映射关系和文章）
+     */
+    @Transactional
+    public void deleteSyncArticle(Long articleId) {
+        // 删除映射关系
+        QueryWrapper<SyncArticleMapping> wrapper = new QueryWrapper<>();
+        wrapper.eq("article_id", articleId);
+        syncArticleMappingMapper.delete(wrapper);
+
+        // 删除文章
+        articleMapper.deleteById(articleId);
+    }
+
+    /**
      * 获取同步文章映射（分页）
      */
     public List<SyncArticleMapping> getSyncArticleMappingPage(int page, int size) {

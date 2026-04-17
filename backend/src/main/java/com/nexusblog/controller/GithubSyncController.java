@@ -39,8 +39,25 @@ public class GithubSyncController {
      */
     @GetMapping("/status/{syncId}")
     public ResponseEntity<SyncHistoryDTO> getSyncStatus(@PathVariable Long syncId) {
-        // TODO: 实现从Service获取同步状态的逻辑
-        return ResponseEntity.notFound().build();
+        com.nexusblog.entity.SyncHistory syncHistory = githubSyncService.getSyncHistoryById(syncId);
+        if (syncHistory == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        SyncHistoryDTO dto = SyncHistoryDTO.builder()
+                .id(syncHistory.getId())
+                .repoConfigId(syncHistory.getRepoConfigId())
+                .status(syncHistory.getStatus())
+                .totalFiles(syncHistory.getTotalFiles())
+                .successCount(syncHistory.getSuccessCount())
+                .failCount(syncHistory.getFailCount())
+                .errorMessage(syncHistory.getErrorMessage())
+                .startTime(syncHistory.getStartTime())
+                .endTime(syncHistory.getEndTime())
+                .createTime(syncHistory.getCreateTime())
+                .build();
+
+        return ResponseEntity.ok(dto);
     }
 
     /**

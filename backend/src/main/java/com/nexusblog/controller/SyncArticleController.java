@@ -42,10 +42,7 @@ public class SyncArticleController {
     public ResponseEntity<Void> deleteSyncArticle(@PathVariable Long id) {
         SyncArticleMapping mapping = githubSyncService.getSyncArticleMappingByArticleId(id);
         if (mapping != null) {
-            // 删除映射关系
-            // TODO: 实现删除逻辑
-            // 删除文章
-            // TODO: 实现删除文章逻辑
+            githubSyncService.deleteSyncArticle(id);
             return ResponseEntity.noContent().<Void>build();
         }
         return ResponseEntity.notFound().build();
