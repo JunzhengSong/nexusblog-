@@ -127,7 +127,7 @@ const updatePreview = () => {
 const fetchCategories = async () => {
   try {
     const response = await categoryApi.getAll()
-    categories.value = response.data
+    categories.value = response
   } catch (error) {
     console.error('Failed to fetch categories:', error)
   }
@@ -136,7 +136,7 @@ const fetchCategories = async () => {
 const fetchTags = async () => {
   try {
     const response = await tagApi.getAll()
-    tags.value = response.data
+    tags.value = response
   } catch (error) {
     console.error('Failed to fetch tags:', error)
   }
@@ -145,7 +145,7 @@ const fetchTags = async () => {
 const fetchArticle = async (id) => {
   try {
     const response = await articleApi.getById(id)
-    const article = response.data
+    const article = response
 
     form.title = article.title || ''
     form.content = article.content || ''

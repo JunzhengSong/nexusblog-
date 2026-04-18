@@ -56,7 +56,7 @@ const fetchArticle = async () => {
   loading.value = true
   try {
     const response = await articleApi.getById(route.params.id)
-    article.value = response.data
+    article.value = response
   } catch (error) {
     console.error('Failed to fetch article:', error)
     router.push('/')

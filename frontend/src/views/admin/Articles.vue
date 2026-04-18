@@ -88,7 +88,7 @@ const fetchArticles = async () => {
   loading.value = true
   try {
     const response = await articleApi.getAll()
-    articles.value = response.data
+    articles.value = response
   } catch (error) {
     console.error('Failed to fetch articles:', error)
   } finally {

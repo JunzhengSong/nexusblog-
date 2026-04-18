@@ -85,9 +85,9 @@ const fetchStats = async () => {
       tagApi.getAll()
     ])
 
-    stats.value.articleCount = articles.data.length
-    stats.value.categoryCount = categories.data.length
-    stats.value.tagCount = tags.data.length
+    stats.value.articleCount = articles.length
+    stats.value.categoryCount = categories.length
+    stats.value.tagCount = tags.length
   } catch (error) {
     console.error('Failed to fetch stats:', error)
   }

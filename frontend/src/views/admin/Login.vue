@@ -87,7 +87,7 @@ const handleLogin = async () => {
     loading.value = true
     try {
       const response = await authApi.login(form)
-      userStore.setUser(response.data)
+      userStore.setUser(response)
       ElMessage.success('登录成功')
 
       const redirect = router.currentRoute.value.query.redirect
