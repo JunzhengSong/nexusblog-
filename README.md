@@ -7,9 +7,8 @@ An AI-native minimalist personal blog system.
 ### Backend
 - Java 21
 - Spring Boot 3.2.x
-- MyBatis-Plus 3.5.5
+- MyBatis-Plus 3.5.7
 - MySQL 8.0+
-- Flyway (database migration)
 - Spring Security
 
 ### Frontend
@@ -29,6 +28,7 @@ nexusblog/
 ├── backend/           # Spring Boot API server
 ├── frontend/          # Vue 3 SPA
 ├── docker/            # Docker configuration
+├── openspec/          # OpenSpec change management
 └── .github/           # CI/CD configuration
 ```
 
@@ -38,7 +38,7 @@ nexusblog/
 - JDK 21
 - Node.js 18+
 - Maven (or use backend/mvnw)
-- MySQL 8.0+ (or MariaDB 10.5+)
+- MySQL 8.0+
 
 ### Backend Setup
 ```bash
@@ -77,33 +77,33 @@ Frontend runs on `http://localhost:5173`
 
 ## Features
 
-- ✅ User authentication (simple username/password)
-- ✅ Article CRUD with Markdown support
-- ✅ Categories and tags
-- ✅ Public article listing and detail view
-- ✅ Admin dashboard
-- ✅ Data persistence (MySQL database with MyBatis-Plus)
-- ✅ Database migrations (Flyway)
-- ✅ Environment variable configuration
+- User authentication (simple username/password)
+- Article CRUD with Markdown support
+- Categories and tags
+- Public article listing and detail view
+- Admin dashboard
+- Data persistence (MySQL database with MyBatis-Plus)
+- Environment variable configuration
 
 ## API Documentation
 
 ### Authentication
 - `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/logout` - User logout
 
 ### Articles
-- `GET /api/v1/articles` - List articles
-- `GET /api/v1/articles/{id}` - Get article details
-- `POST /api/v1/articles` - Create article
-- `PUT /api/v1/articles/{id}` - Update article
-- `DELETE /api/v1/articles/{id}` - Delete article
+- `GET /api/v1/articles` - List articles (public)
+- `GET /api/v1/articles/{id}` - Get article details (public)
+- `POST /api/v1/articles` - Create article (auth required)
+- `PUT /api/v1/articles/{id}` - Update article (auth required)
+- `DELETE /api/v1/articles/{id}` - Delete article (auth required)
 
 ### Categories & Tags
-- `GET /api/v1/categories` - List categories
-- `GET /api/v1/tags` - List tags
+- `GET /api/v1/categories` - List categories (public)
+- `GET /api/v1/tags` - List tags (public)
 
 ### Health
-- `GET /api/v1/health` - System health check
+- `GET /api/v1/health` - System health check (public)
 
 ## Development
 
@@ -117,18 +117,6 @@ Edit `backend/pom.xml`
 cd frontend
 npm install <package>
 ```
-
-### Database
-
-The H2 database file is stored in the `data/` directory. Database console is available at:
-```
-http://localhost:8080/h2-console
-```
-
-Connection settings:
-- JDBC URL: `jdbc:h2:file:./data/nexusblog;MODE=MySQL`
-- User: `sa`
-- Password: (empty)
 
 ## License
 
