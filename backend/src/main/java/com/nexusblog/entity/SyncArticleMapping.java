@@ -1,6 +1,7 @@
 package com.nexusblog.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.nexusblog.entity.common.BaseEntity;
@@ -22,10 +23,12 @@ public class SyncArticleMapping extends BaseEntity {
 
     private Long repoConfigId;
 
+    @TableField(exist = false)
     private GithubRepoConfig repoConfig;
 
     private Long articleId;
 
+    @TableField(exist = false)
     private Article article;
 
     private String filePath; // GitHub文件路径

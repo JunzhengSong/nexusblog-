@@ -1,6 +1,7 @@
 package com.nexusblog.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.nexusblog.entity.common.BaseEntity;
@@ -24,6 +25,7 @@ public class SyncHistory extends BaseEntity {
 
     private Long repoConfigId;
 
+    @TableField(exist = false)
     private GithubRepoConfig repoConfig;
 
     private String status; // 同步状态：PENDING, RUNNING, SUCCESS, FAILED

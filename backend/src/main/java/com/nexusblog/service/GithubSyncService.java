@@ -30,6 +30,7 @@ public class GithubSyncService {
     private final ArticleMapper articleMapper;
     private final CategoryMapper categoryMapper;
     private final TagMapper tagMapper;
+    private final AesEncryptUtil aesEncryptUtil;
 
     /**
      * 获取所有仓库配置（按创建时间降序）
@@ -207,7 +208,6 @@ public class GithubSyncService {
      * 异步执行同步
      */
     @Async("githubSyncExecutor")
-    @Transactional
     public void syncRepository(Long repoConfigId, Long syncHistoryId) {
         SyncHistory syncHistory = syncHistoryMapper.selectById(syncHistoryId);
         if (syncHistory == null) {
@@ -227,7 +227,7 @@ public class GithubSyncService {
 
             // 解密访问令牌
             String accessToken = repoConfig.getAccessToken() != null ?
-                AesEncryptUtil.decrypt(repoConfig.getAccessToken()) : null;
+                aesEncryptUtil.decrypt(repoConfig.getAccessToken()) : null;
 
             // 获取所有Markdown文件
             List<GithubClient.GithubFile> files = githubClient.listMarkdownFiles(
