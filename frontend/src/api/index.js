@@ -18,7 +18,12 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   response => {
-    return response
+    const { code, data, message } = response.data
+    if (code !== 200 && code !== 204) {
+      ElMessage.error(message || '请求失败')
+      return Promise.reject(new Error(message || '请求失败'))
+    }
+    return data
   },
   error => {
     if (error.response) {

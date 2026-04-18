@@ -18,3 +18,9 @@ schema: spec-driven
 #       - Always include a "Non-goals" section
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
+
+# Language rule (required for this project)
+# All artifacts MUST be written in Chinese (中文)
+rules:
+  _default:
+    - 所有文档必须使用中文编写 (All artifacts MUST be written in Chinese)

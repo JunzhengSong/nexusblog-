@@ -1,12 +1,12 @@
 package com.nexusblog.controller;
 
+import com.nexusblog.common.ApiResult;
 import com.nexusblog.dto.SyncHistoryDTO;
 import com.nexusblog.service.GithubSyncService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,11 +19,8 @@ public class GithubSyncController {
         this.githubSyncService = githubSyncService;
     }
 
-    /**
-     * 触发同步
-     */
     @PostMapping("/{repoId}")
-    public ResponseEntity<Map<String, Object>> triggerSync(@PathVariable Long repoId) {
+    public ApiResult<Map<String, Object>> triggerSync(@PathVariable Long repoId) {
         Long syncId = githubSyncService.startSync(repoId);
 
         Map<String, Object> result = new HashMap<>();
@@ -31,17 +28,14 @@ public class GithubSyncController {
         result.put("status", "PENDING");
         result.put("message", "同步任务已提交，后台执行中");
 
-        return ResponseEntity.ok(result);
+        return ApiResult.ok(result);
     }
 
-    /**
-     * 查询同步状态
-     */
     @GetMapping("/status/{syncId}")
-    public ResponseEntity<SyncHistoryDTO> getSyncStatus(@PathVariable Long syncId) {
+    public ApiResult<SyncHistoryDTO> getSyncStatus(@PathVariable Long syncId) {
         com.nexusblog.entity.SyncHistory syncHistory = githubSyncService.getSyncHistoryById(syncId);
         if (syncHistory == null) {
-            return ResponseEntity.notFound().build();
+            return ApiResult.error(404, "同步记录不存在");
         }
 
         SyncHistoryDTO dto = SyncHistoryDTO.builder()
@@ -57,26 +51,20 @@ public class GithubSyncController {
                 .createTime(syncHistory.getCreateTime())
                 .build();
 
-        return ResponseEntity.ok(dto);
+        return ApiResult.ok(dto);
     }
 
-    /**
-     * 分页查询所有同步历史
-     */
     @GetMapping("/history")
-    public ResponseEntity<java.util.List<SyncHistoryDTO>> getSyncHistory(
+    public ApiResult<List<SyncHistoryDTO>> getSyncHistory(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        java.util.List<SyncHistoryDTO> history = githubSyncService.getSyncHistoryPage(page, size);
-        return ResponseEntity.ok(history);
+        List<SyncHistoryDTO> history = githubSyncService.getSyncHistoryPage(page, size);
+        return ApiResult.ok(history);
     }
 
-    /**
-     * 查询指定仓库的同步历史
-     */
     @GetMapping("/history/repo/{repoId}")
-    public ResponseEntity<java.util.List<com.nexusblog.entity.SyncHistory>> getSyncHistoryByRepoRepoConfigId(@PathVariable Long repoId) {
-        java.util.List<com.nexusblog.entity.SyncHistory> history = githubSyncService.getSyncHistoryByRepoConfigId(repoId);
-        return ResponseEntity.ok(history);
+    public ApiResult<List<com.nexusblog.entity.SyncHistory>> getSyncHistoryByRepoConfigId(@PathVariable Long repoId) {
+        List<com.nexusblog.entity.SyncHistory> history = githubSyncService.getSyncHistoryByRepoConfigId(repoId);
+        return ApiResult.ok(history);
     }
 }

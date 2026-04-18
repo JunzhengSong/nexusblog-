@@ -65,7 +65,7 @@ const filterRepoId = ref()
 const loadRepoList = async () => {
   try {
     const res = await getRepoConfigs()
-    repoList.value = res.data
+    repoList.value = res
   } catch (error) {
     ElMessage.error('加载仓库列表失败：' + error.message)
   }
@@ -82,7 +82,7 @@ const loadData = async () => {
       res = await getSyncArticles()
     }
     // 补充仓库名称和文章标题
-    articleList.value = res.data.content.map(item => {
+    articleList.value = res.map(item => {
       const repo = repoList.value.find(r => r.id === item.repoConfigId)
       return {
         ...item,

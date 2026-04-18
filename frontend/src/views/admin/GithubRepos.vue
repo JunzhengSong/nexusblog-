@@ -136,7 +136,7 @@ const loadData = async () => {
   loading.value = true
   try {
     const res = await getRepoConfigs()
-    repoList.value = res.data
+    repoList.value = res
   } catch (error) {
     ElMessage.error('加载失败：' + error.message)
   } finally {
@@ -219,7 +219,7 @@ const handleDelete = async (row) => {
 const handleTestConnection = async (row) => {
   try {
     const res = await testRepoConnection(row)
-    if (res.data) {
+    if (res) {
       ElMessage.success('连接成功！')
     } else {
       ElMessage.error('连接失败，请检查配置是否正确')
@@ -239,7 +239,7 @@ const handleSync = async (row) => {
     )
 
     const res = await triggerSync(row.id)
-    ElMessage.success(`同步任务已提交，任务ID：${res.data.syncId}，可以在同步历史中查看进度`)
+    ElMessage.success(`同步任务已提交，任务ID：${res.syncId}，可以在同步历史中查看进度`)
   } catch (error) {
     if (error.action !== 'cancel') {
       ElMessage.error('操作失败：' + error.message)

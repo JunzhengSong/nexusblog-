@@ -1,12 +1,12 @@
 package com.nexusblog.controller;
 
 import com.nexusblog.client.GithubClient;
+import com.nexusblog.common.ApiResult;
 import com.nexusblog.dto.GithubRepoConfigDTO;
 import com.nexusblog.entity.GithubRepoConfig;
 import com.nexusblog.service.GithubSyncService;
 import com.nexusblog.util.AesEncryptUtil;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,35 +24,26 @@ public class GithubRepoConfigController {
         this.githubClient = githubClient;
     }
 
-    /**
-     * 获取所有仓库配置
-     */
     @GetMapping
-    public ResponseEntity<List<GithubRepoConfigDTO>> getAll() {
+    public ApiResult<List<GithubRepoConfigDTO>> getAll() {
         List<GithubRepoConfig> configs = githubSyncService.getAllRepoConfigs();
         List<GithubRepoConfigDTO> dtos = configs.stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+        return ApiResult.ok(dtos);
     }
 
-    /**
-     * 根据ID获取仓库配置
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<GithubRepoConfigDTO> getById(@PathVariable Long id) {
+    public ApiResult<GithubRepoConfigDTO> getById(@PathVariable Long id) {
         GithubRepoConfig config = githubSyncService.getRepoConfigById(id);
         if (config == null) {
-            return ResponseEntity.notFound().build();
+            return ApiResult.error(404, "仓库配置不存在");
         }
-        return ResponseEntity.ok(convertToDTO(config));
+        return ApiResult.ok(convertToDTO(config));
     }
 
-    /**
-     * 创建仓库配置
-     */
     @PostMapping
-    public ResponseEntity<GithubRepoConfigDTO> create(@Valid @RequestBody GithubRepoConfigDTO dto) {
+    public ApiResult<GithubRepoConfigDTO> create(@Valid @RequestBody GithubRepoConfigDTO dto) {
         GithubRepoConfig config = GithubRepoConfig.builder()
                 .name(dto.getName())
                 .repoUrl(dto.getRepoUrl())
@@ -64,23 +55,19 @@ public class GithubRepoConfigController {
                 .description(dto.getDescription())
                 .build();
 
-        // 加密访问令牌
         if (dto.getAccessToken() != null && !dto.getAccessToken().isEmpty()) {
             config.setAccessToken(AesEncryptUtil.encrypt(dto.getAccessToken()));
         }
 
         githubSyncService.createRepoConfig(config);
-        return ResponseEntity.ok(convertToDTO(config));
+        return ApiResult.ok(convertToDTO(config), "创建成功");
     }
 
-    /**
-     * 更新仓库配置
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<GithubRepoConfigDTO> update(@PathVariable Long id, @Valid @RequestBody GithubRepoConfigDTO dto) {
+    public ApiResult<GithubRepoConfigDTO> update(@PathVariable Long id, @Valid @RequestBody GithubRepoConfigDTO dto) {
         GithubRepoConfig config = githubSyncService.getRepoConfigById(id);
         if (config == null) {
-            return ResponseEntity.notFound().build();
+            return ApiResult.error(404, "仓库配置不存在");
         }
 
         config.setName(dto.getName());
@@ -92,41 +79,31 @@ public class GithubRepoConfigController {
         config.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : true);
         config.setDescription(dto.getDescription());
 
-        // 如果accessToken不为空，更新并加密
         if (dto.getAccessToken() != null && !dto.getAccessToken().isEmpty()) {
             config.setAccessToken(AesEncryptUtil.encrypt(dto.getAccessToken()));
         }
 
         githubSyncService.updateRepoConfig(config);
-        return ResponseEntity.ok(convertToDTO(config));
+        return ApiResult.ok(convertToDTO(config), "更新成功");
     }
 
-    /**
-     * 删除仓库配置
-     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ApiResult<Void> delete(@PathVariable Long id) {
         GithubRepoConfig config = githubSyncService.getRepoConfigById(id);
         if (config == null) {
-            return ResponseEntity.notFound().build();
+            return ApiResult.error(404, "仓库配置不存在");
         }
         githubSyncService.deleteRepoConfig(id);
-        return ResponseEntity.noContent().build();
+        return ApiResult.noContent("删除成功");
     }
 
-    /**
-     * 测试仓库连接
-     */
     @PostMapping("/test-connection")
-    public ResponseEntity<Boolean> testConnection(@RequestBody GithubRepoConfigDTO dto) {
+    public ApiResult<Boolean> testConnection(@RequestBody GithubRepoConfigDTO dto) {
         boolean connected = githubClient.testConnection(
             dto.getRepoUrl(), dto.getBranch(), dto.getAccessToken());
-        return ResponseEntity.ok(connected);
+        return ApiResult.ok(connected);
     }
 
-    /**
-     * 转换实体为DTO，不返回accessToken
-     */
     private GithubRepoConfigDTO convertToDTO(GithubRepoConfig config) {
         GithubRepoConfigDTO dto = new GithubRepoConfigDTO();
         dto.setId(config.getId());
@@ -138,7 +115,6 @@ public class GithubRepoConfigController {
         dto.setDefaultTags(config.getDefaultTags());
         dto.setEnabled(config.getEnabled());
         dto.setDescription(config.getDescription());
-        // 不返回accessToken
         return dto;
     }
 }

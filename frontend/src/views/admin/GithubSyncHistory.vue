@@ -137,7 +137,7 @@ const getStatusText = (status) => {
 const loadRepoList = async () => {
   try {
     const res = await getRepoConfigs()
-    repoList.value = res.data
+    repoList.value = res
   } catch (error) {
     ElMessage.error('加载仓库列表失败：' + error.message)
   }
@@ -153,7 +153,7 @@ const loadData = async () => {
     }
     const res = await getSyncHistory(params)
     // 补充仓库名称
-    historyList.value = res.data.content.map(item => {
+    historyList.value = res.map(item => {
       const repo = repoList.value.find(r => r.id === item.repoConfigId)
       return {
         ...item,

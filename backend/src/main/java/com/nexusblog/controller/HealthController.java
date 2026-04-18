@@ -1,7 +1,7 @@
 package com.nexusblog.controller;
 
+import com.nexusblog.common.ApiResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,13 +20,12 @@ public class HealthController {
     private final DataSource dataSource;
 
     @GetMapping("/health")
-    public ResponseEntity<Map<String, Object>> health() {
+    public ApiResult<Map<String, Object>> health() {
         Map<String, Object> health = new HashMap<>();
         health.put("status", "UP");
         health.put("timestamp", LocalDateTime.now());
         health.put("service", "NexusBlog API");
 
-        // Check database connection
         try (Connection connection = dataSource.getConnection()) {
             Map<String, Object> dbInfo = new HashMap<>();
             dbInfo.put("status", "UP");
@@ -41,6 +40,6 @@ public class HealthController {
             health.put("status", "DEGRADED");
         }
 
-        return ResponseEntity.ok(health);
+        return ApiResult.ok(health);
     }
 }

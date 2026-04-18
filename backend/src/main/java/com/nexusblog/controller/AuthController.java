@@ -1,11 +1,11 @@
 package com.nexusblog.controller;
 
+import com.nexusblog.common.ApiResult;
 import com.nexusblog.dto.LoginRequest;
 import com.nexusblog.dto.LoginResponse;
 import com.nexusblog.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,14 +16,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ApiResult<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         LoginResponse response = authService.login(loginRequest);
-        return ResponseEntity.ok(response);
+        return ApiResult.ok(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        // Spring Security will handle session invalidation
-        return ResponseEntity.ok("Logged out successfully");
+    public ApiResult<Void> logout() {
+        return ApiResult.ok(null, "退出登录成功");
     }
 }

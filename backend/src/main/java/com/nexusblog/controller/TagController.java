@@ -1,9 +1,9 @@
 package com.nexusblog.controller;
 
+import com.nexusblog.common.ApiResult;
 import com.nexusblog.dto.TagDTO;
 import com.nexusblog.service.TagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,14 +16,14 @@ public class TagController {
     private final TagService tagService;
 
     @GetMapping
-    public ResponseEntity<List<TagDTO>> getAllTags() {
+    public ApiResult<List<TagDTO>> getAllTags() {
         List<TagDTO> tags = tagService.getAllTags();
-        return ResponseEntity.ok(tags);
+        return ApiResult.ok(tags);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TagDTO> getTagById(@PathVariable Long id) {
+    public ApiResult<TagDTO> getTagById(@PathVariable Long id) {
         TagDTO tag = tagService.getTagById(id);
-        return ResponseEntity.ok(tag);
+        return ApiResult.ok(tag);
     }
 }
