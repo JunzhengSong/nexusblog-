@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/login", "/api/v1/health").permitAll()
+                .requestMatchers("/api/v1/auth/login", "/api/v1/auth/logout", "/api/v1/health").permitAll()
                 .requestMatchers("/api/v1/articles/**", "/api/v1/categories/**", "/api/v1/tags/**").permitAll()
                 .requestMatchers("/api/v1/github/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
