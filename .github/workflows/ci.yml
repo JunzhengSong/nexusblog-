@@ -25,9 +25,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Set up Maven
-        uses: supercharge/maven-github-actions-ci-cd@1.2.1
-
       - name: Build backend with Maven
         working-directory: ./backend
         run: mvn clean package -DskipTests
