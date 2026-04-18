@@ -61,7 +61,10 @@
       "Bash(echo \"Spring Boot服务启动中，PID: $!\")",
       "Bash(findstr \":8080\")",
       "Bash(echo \"Spring Boot启动中，PID: $!\")",
-      "Bash(export DB_PASSWORD=123456)"
+      "Bash(export DB_PASSWORD=123456)",
+      "Bash(./mvnw compile *)",
+      "Bash(echo \"Exit code: $?\")",
+      "WebFetch(domain:www.heyuan110.com)"
     ]
   }
 }
