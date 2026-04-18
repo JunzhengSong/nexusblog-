@@ -50,25 +50,6 @@ spring:
         # 逻辑未删除值（未删除）
         logic-not-delete-value: 0
 
-  # Flyway 数据库迁移配置
-  flyway:
-    # 是否启用 Flyway
-    enabled: false
-    # 迁移脚本位置
-    locations: classpath:db/migration
-    # 迁移时验证
-    validate-on-migrate: true
-    # 基准版本（首次迁移时使用）
-    baseline-on-migrate: true
-    # 编码
-    encoding: UTF-8
-    # 迁移脚本前缀
-    sql-migration-prefix: V
-    # 迁移脚本分隔符
-    sql-migration-separator: __
-    # 迁移脚本后缀
-    sql-migration-suffixes: .sql
-
 logging:
   level:
     root: INFO
